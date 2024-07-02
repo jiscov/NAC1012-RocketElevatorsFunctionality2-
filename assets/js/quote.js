@@ -115,29 +115,25 @@ function showHideFieldOnBuildingType() {
 }
 
 
-
-/* PLEASE REMOVE THIS LINE, ALONG WITH THE CLOSING  * /  , TO UNCOMMENT THE CODE BELOW 
-(The page may not work like before since the code is broken and need to be fixed)
-
 // Functions that calculate the amount of elevators needed depending on the building type
 function calculateElevatorsNeeded() {
     const selectedBuildingType = SELECT_BUILDING_TYPE.value;
     let elevatorsNeeded = '';
 
     // Check if the residential building type is selected and its fields, number of floors value & number of apartments value are filled
-    if (selectedBuildingType === "" &&  && ) {
+    if (selectedBuildingType === "residential" && INPUT_NUMBER_OF_FLOORS.value !== '' && INPUT_NUMBER_OF_APARTMENTS.value !== '') {
         // Call function that calculates the amount of elevators needed with the proper attributes
         elevatorsNeeded = calculateResidentialElevators();
     }
 
     // Check if the commercial building type is selected and its fields, number of floors value & maximum occupancy value are filled
-    else if (selectedBuildingType === "" &&  && ) {
+    else if (selectedBuildingType === "commercial" && INPUT_NUMBER_OF_FLOORS.value !== '' && INPUT_MAXIMUM_OCCUPANCY.value !== '') {
         // Call function that calculates the amount of elevators needed with the proper attributes
         elevatorsNeeded = calculateCommercialElevators();
     }
 
     // Check if the industrial building type is selected and it field, number of elevators value is filled
-    else if (selectedBuildingType === "" && ) {
+    else if (selectedBuildingType === "industrial" && INPUT_NUMBER_OF_ELEVATORS.value !== '') {
         // Call function that calculates the amount of elevators needed with the proper attributes
         elevatorsNeeded = calculateIndustrialElevators();
     }
@@ -152,13 +148,13 @@ function calculateElevatorsNeeded() {
 // Functions that calculate the amount of elevators needed for residential buildings
 function calculateResidentialElevators(numberOfFloors, numberOfApartment) {
     // Set the varialbe of the average apartment per floor
-    let AVG_APT_PER_FLOOR = Math.ceil( / );
+    let AVG_APT_PER_FLOOR = Math.ceil(numberOfApartment / numberOfFloors);
     
     // Set the varialbe of the amount of elevators needed
-    let ELEVATORS_NEEDED = Math.ceil( / );
+    let ELEVATORS_NEEDED = Math.ceil(AVG_APT_PER_FLOOR / 6);
 
     // Set the varialbe of the amount of elevators bank
-    let ELEVATORS_BANK = Math.ceil( / );
+    let ELEVATORS_BANK = Math.ceil(numberOfFloors / 20);
 
     // Return the total amount of elevators
     return ELEVATORS_NEEDED * ELEVATORS_BANK;
@@ -167,19 +163,19 @@ function calculateResidentialElevators(numberOfFloors, numberOfApartment) {
 // Functions that calculate the amount of elevators needed for commercial buildings
 function calculateCommercialElevators(numberOfFloors, maximumOccupancyPerFloor) {
     // Set the varialbe of the total number of occupants
-    let TOTAL_NUMBER_OCCUPANTS = Math.ceil( * );
+    let TOTAL_NUMBER_OCCUPANTS = Math.ceil(numberOfFloors * maximumOccupancyPerFloor);
 
     // Set the varialbe of the amount of elevators required per bank
-    let ELEVATORS_REQUIRED_PER_BANK = Math.ceil( / );
+    let ELEVATORS_REQUIRED_PER_BANK = Math.ceil(TOTAL_NUMBER_OCCUPANTS / 200);
 
     // Set the varialbe of the amount of elevators bank
-    let ELEVATOR_BANKS_REQUIRED = Math.ceil( / );
+    let ELEVATOR_BANKS_REQUIRED = Math.ceil(numberOfFloors / 10);
 
     // Set the varialbe of the total amount of elevators required per bank
-    let TOTAL_ELEVATORS_REQUIRED_PER_BANK =  * ;
+    let TOTAL_ELEVATORS_REQUIRED_PER_BANK = ELEVATORS_REQUIRED_PER_BANK * ELEVATOR_BANKS_REQUIRED;
 
     // Set the varialbe of the amount of additional elevators for freight
-    let ADDITIONAL_ELEVATOR_FOR_FREIGHT_PER_BANK = Math.ceil( / );
+    let ADDITIONAL_ELEVATOR_FOR_FREIGHT_PER_BANK = ELEVATOR_BANKS_REQUIRED;
 
     // Return the total amount of elevators
     return TOTAL_ELEVATORS_REQUIRED_PER_BANK + ADDITIONAL_ELEVATOR_FOR_FREIGHT_PER_BANK
@@ -187,16 +183,16 @@ function calculateCommercialElevators(numberOfFloors, maximumOccupancyPerFloor) 
 
 // Functions that return the amount of elevators needed for industrial buildings
 function calculateIndustrialElevators(numberOfElevators) {
-    return ;
+    return numberOfElevators;
 }
 
 // Function that calculates the installation fees
-function calculateInstallationFees(, ) {
+function calculateInstallationFees(totalPrice, installationPercentFees) {
     return Number(totalPrice) * Number(installationPercentFees);
 }
 
 // Function that calculates the total cost
-function calculateTotalCost() {
+function calculateTotalCost(amountElevatorsNeeded, UNIT_PRICES, INSTALLATION_PERCENT_FEES) {
     // Set empty variables to be used in this function
     let unitPrice;
     let totalElevatorPrice;
@@ -236,15 +232,11 @@ function calculateTotalCost() {
     const formatCurrency = (amount) => new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'}).format(amount);
 
     // Set read-only inputs with the calculated values using the formatCurrency function
-    INPUT_ELEVATOR_UNIT_PRICE.value = formatCurrency();
-    INPUT_ELEVATOR_TOTAL_PRICE.value = formatCurrency();
-    INPUT_INSTALLATION_FEES.value = formatCurrency();
-    INPUT_TOTAL_COST.value = formatCurrency();
+    INPUT_ELEVATOR_UNIT_PRICE.value = formatCurrency(unitPrice);
+    INPUT_ELEVATOR_TOTAL_PRICE.value = formatCurrency(totalElevatorPrice);
+    INPUT_INSTALLATION_FEES.value = formatCurrency(installationFees);
+    INPUT_TOTAL_COST.value = formatCurrency(totalCost);
 }
-
-*/
-
-
 
 ////////////////////////////////////////////////////////////////
 // EVENT LISTENERS
@@ -254,18 +246,11 @@ function calculateTotalCost() {
 SELECT_BUILDING_TYPE.addEventListener("change", showHideFieldOnBuildingType);
 
 
-
-/* PLEASE REMOVE THIS LINE, ALONG WITH THE CLOSING  * /  , TO UNCOMMENT THE CODE BELOW 
-(The page may not work like before since the code is broken and need to be fixed)
-
 // Set up event listeners for input changes in step 2 fields to trigger the function calculateElevatorsNeeded.
-DIV_STEP_2.addEventListener('', calculateElevatorsNeeded)
+DIV_STEP_2.addEventListener('input', calculateElevatorsNeeded)
 
 // Set up event listeners for changes in radio button selections within the product line to trigger the function calculateElevatorsNeeded.
-RADIO_BUTTONS_PRODUCT_LINE.addEventListener('', calculateElevatorsNeeded)
-
-*/
-
+RADIO_BUTTONS_PRODUCT_LINE.addEventListener('change', calculateElevatorsNeeded)
 
 
 ////////////////////////////////////////////////////////////////
